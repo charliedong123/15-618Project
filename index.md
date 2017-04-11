@@ -16,9 +16,11 @@ Data parallelism - Computing the dot product of the input and the weights at eac
 An extremely popular DNN is Covolutional Neural Network(CNN) which is extensively used in the domain of computer vision. SqueezeNet was created to combat the large number of parameters required for CNNs. Based on AlexNet\[[1][1]\] , the purpose was to reduce the memory required without losing accuracy. We will be accelerating SqueezeNet on the Zybo Zync-7020 FPGA. 
 
 ![SqueezeNet Architecture](https://ai2-s2-public.s3.amazonaws.com/figures/2016-11-08/0919b3ab82ff8a052490389f217c480c273f2b92/1-Figure2-1.png)
+
+
 Figure 1: The SqueezeNet Architecture
 
-## Challenge
+## Challenges
 All the different levels of parallelism vary drastically and will be traded off against each other. Some are more prominent in the problem as compared to others. Varying amount of effort and benefit is involved in each, which would require extensive amount of platform knowledge (FPGA in this case) and testing multiple implementations! Deciding which one to prioritize at what cost will be challenging! Also, some types of parallelism may not be suitable for us to implement on the FPGA depending on the design (eg: exploiting bit-level parallelism on FPGA).
 
 One of the major challenges that we will be dealing with is being memory bound on the FPGA. The specific device that we have has 256 KB of on-chip memory with options for external memory. The size of SqueezeNet is much larger than this and would be difficult to fit on the chip. This means we will also have to ensure data locality and reuse.
@@ -71,9 +73,9 @@ FPGAs on the other hand offer the best balance of cost:performance and flexibili
 
 \[3\]: http://lab.fs.uni-lj.si/lasin/wp/IMIT_files/neural/doc/Omondi2006.pdf
 
-[0]: https://arxiv.org/pdf/1602.07360.pdf
-[1]: https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf
-[2]: https://github.com/dgschwend/zynqnet
-[3]: http://lab.fs.uni-lj.si/lasin/wp/IMIT_files/neural/doc/Omondi2006.pdf
+[0]: [https://arxiv.org/pdf/1602.07360.pdf](https://arxiv.org/pdf/1602.07360.pdf)
+[1]: [https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
+[2]: [https://github.com/dgschwend/zynqnet](https://github.com/dgschwend/zynqnet)
+[3]: [http://lab.fs.uni-lj.si/lasin/wp/IMIT_files/neural/doc/Omondi2006.pdf](http://lab.fs.uni-lj.si/lasin/wp/IMIT_files/neural/doc/Omondi2006.pdf)
 
 
