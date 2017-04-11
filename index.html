@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>Stellar by HTML5 UP</title>
+		<title>Accelerating SqueezeNet on FPGA</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
@@ -22,18 +22,16 @@
 				<!-- Header -->
 					<header id="header" class="alt">
 						<span class="logo"><img src="images/logo.svg" alt="" /></span>
-						<h1>Stellar</h1>
-						<p>Just another free, fully responsive site template<br />
-						built by <a href="https://twitter.com/ajlkn">@ajlkn</a> for <a href="https://html5up.net">HTML5 UP</a>.</p>
+						<h1>Accelerating SqueezeNet on FPGA</h1>
+						<p>by <a href="https://twitter.com/ajlkn">Megha Arora</a> and <a href="https://html5up.net">Samyukta Lanka</a>.</p>
 					</header>
 
 				<!-- Nav -->
 					<nav id="nav">
 						<ul>
-							<li><a href="#intro" class="active">Introduction</a></li>
-							<li><a href="#first">First Section</a></li>
-							<li><a href="#second">Second Section</a></li>
-							<li><a href="#cta">Get Started</a></li>
+							<li><a href="#proposal" class="active">Proposal</a></li>
+							<li><a href="#first">CheckPoint</a></li>
+							<li><a href="#second">Final</a></li>
 						</ul>
 					</nav>
 
@@ -41,29 +39,109 @@
 					<div id="main">
 
 						<!-- Introduction -->
-							<section id="intro" class="main">
+							<section id="proposal" class="main">
 								<div class="spotlight">
 									<div class="content">
 										<header class="major">
-											<h2>Ipsum sed adipiscing</h2>
+											<h2>Summary</h2>
 										</header>
-										<p>Sed lorem ipsum dolor sit amet nullam consequat feugiat consequat magna
-										adipiscing magna etiam amet veroeros. Lorem ipsum dolor tempus sit cursus.
-										Tempus nisl et nullam lorem ipsum dolor sit amet aliquam.</p>
-										<ul class="actions">
-											<li><a href="generic.html" class="button">Learn More</a></li>
-										</ul>
+										<p>We will accelerate SqueezeNet[0] (a CNN variant) on an FPGA</p>
 									</div>
-									<span class="image"><img src="images/pic01.jpg" alt="" /></span>
+								</div>
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Background</h2>
+										</header>
+										<p>We chose DNNs because they are revolutionizing many areas of computing today and there is parallelism that the underlying model possesses. The sequence of multiply/add operations (like FMA) to calculate the input to each layer in the network are highly parallelizable. In particular, there are multiple axis of parallelism we plan to explore - </p>
+
+										<ul>Layer parallelism - different layers being processed in parallel (low level of parallelism) [maybe use pipelining to exploit this] </ul>
+
+										<ul>Node parallelism - Here the axis of parallelism will be each neuron (there can be millions in a DNN); most prominent in this problem. Entails high level of parallelism and FPGA ‘cells’ are ideal for this </ul>
+
+										<ul>Data parallelism - Computing the dot product of the input and the weights at each step (including convolution) in parallel. </ul>
+
+										<p>An extremely popular DNN is Covolutional Neural Network(CNN) which is extensively used in the domain of computer vision. SqueezeNet was created to combat the large number of parameters required for CNNs. Based on AlexNet[1] , the purpose was to reduce the memory required without losing accuracy. We will be accelerating SqueezeNet on the Zybo Zync-7020 FPGA.</p>
+									</div>
+								</div>
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Challenges</h2>
+										</header>
+										<p>All the different levels of parallelism vary drastically and will be traded off against each other. Some are more prominent in the problem as compared to others. Varying amount of effort and benefit is involved in each, which would require extensive amount of platform knowledge (FPGA in this case) and testing multiple implementations! Deciding which one to prioritize at what cost will be challenging! Also, some types of parallelism may not be suitable for us to implement on the FPGA depending on the design (eg: exploiting bit-level parallelism on FPGA). </p>
+
+										<p> One of the major challenges that we will be dealing with is being memory bound on the FPGA. The specific device that we have has 256 KB of on-chip memory with options for external memory. The size of SqueezeNet is much larger than this and would be difficult to fit on the chip. This means we will also have to ensure data locality and reuse.</p>
+									</div>
+								</div>
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Resources</h2>
+										</header>
+										<p>We will use the Zybo Zync-7020 FPGA for this task. We do not have a codebase to refer to; the initial FPGA implementation will be our first goal. We will be referring to the following implementations/papers extensively - </p>
+
+										<ul>SqueezeNet[0] </ul>
+										<ul>Implementation of SqueezeNet-like CNN on FPGA[2] </ul>
+										<ul>FPGA Implementations of Neural Networks[3]</ul>
+									</div>
+								</div>
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Goals and Deliverables</h2>
+										</header>
+										<p>Plan to Achieve: Get a working baseline FPGA implementation that exceeds CPU performance without compromising accuracy </p>
+
+										<p>Hope to Achieve: Fit everything in on-chip memory </p>
+
+										<p>Demo: Simultaneously show SqueezeNet in action on multiple images with one version running the CPU implementation and the other running the FPGA implementation. We will also present the performance of our implementation as compared to existing benchmarks through speedup graphs. </p>
+									</div>
+								</div>
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Platform</h2>
+										</header>
+										<p> General purpose processors fail to fully exploit the parallelism inherent in DNNs. For instance it can take upto 3 weeks to train a 22 layer CNN for image classification (ImageNet) using 1 NVIDIA K20 GPU. The drawback of using an ASIC neurocomputer for this task also has its own challenges. First, devices that work on special applications always lag behind the mass-produced devices in terms of innovation. Given the variability in ANN architectures, the ASIC neurocomputer cannot be extended to many different architectures without involving significant cost! </p>
+
+										<p>FPGAs on the other hand offer the best balance of cost:performance and flexibility for this domain as compared to ASIC neurocomputers or state-of-the-art multi-purpose processors. Essentially, they can be used as ‘semi-custom’ machines for neural networks. </p>
+									</div>
+								</div>
+
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Schedule</h2>
+										</header>
+										| Date                    | Milestone<br>                     
+										| April 10<sup>th</sup>   | Proposal<br>
+										| April 16<sup>th</sup>   | Convolutions and Max Pooling Layers Working Separately on FPGA<br>
+										| April 23<sup>th</sup>   | Full SqueezeNet Working on FPGA<br>
+										| April 30<sup>th</sup>   | Acceleration + Optimizations<br> 
+										| May 7<sup>th</sup>      | Benchmarking<br> 
+										| May 11<sup>th</sup>     | Result Collation + Report Writing<br>
+									</div>
+								</div>
+
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>References</h2>
+										</header>
+										<ul>[0]: https://arxiv.org/pdf/1602.07360.pdf</ul>
+										<ul>[1]: https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf</ul>
+										<ul>[3]: http://lab.fs.uni-lj.si/lasin/wp/IMIT_files/neural/doc/Omondi2006.pdf</ul>
+									</div>
 								</div>
 							</section>
 
 						<!-- First Section -->
 							<section id="first" class="main special">
 								<header class="major">
-									<h2>Magna veroeros</h2>
+									<h2>Checkpoint</h2>
 								</header>
-								<ul class="features">
+<!-- 								<ul class="features">
 									<li>
 										<span class="icon major style1 fa-code"></span>
 										<h3>Ipsum consequat</h3>
@@ -84,17 +162,17 @@
 									<ul class="actions">
 										<li><a href="generic.html" class="button">Learn More</a></li>
 									</ul>
-								</footer>
+								</footer> -->
 							</section>
 
 						<!-- Second Section -->
 							<section id="second" class="main special">
 								<header class="major">
-									<h2>Ipsum consequat</h2>
-									<p>Donec imperdiet consequat consequat. Suspendisse feugiat congue<br />
-									posuere. Nulla massa urna, fermentum eget quam aliquet.</p>
-								</header>
-								<ul class="statistics">
+									<h2>Final</h2>
+									<!-- <p>Donec imperdiet consequat consequat. Suspendisse feugiat congue<br />
+									posuere. Null a massa urna, fermentum eget quam aliquet.</p>
+								</header> -->
+								<!-- <ul class="statistics">
 									<li class="style1">
 										<span class="icon fa-code-fork"></span>
 										<strong>5,120</strong> Etiam
@@ -115,35 +193,18 @@
 										<span class="icon fa-diamond"></span>
 										<strong>1,024</strong> Nullam
 									</li>
-								</ul>
-								<p class="content">Nam elementum nisl et mi a commodo porttitor. Morbi sit amet nisl eu arcu faucibus hendrerit vel a risus. Nam a orci mi, elementum ac arcu sit amet, fermentum pellentesque et purus. Integer maximus varius lorem, sed convallis diam accumsan sed. Etiam porttitor placerat sapien, sed eleifend a enim pulvinar faucibus semper quis ut arcu. Ut non nisl a mollis est efficitur vestibulum. Integer eget purus nec nulla mattis et accumsan ut magna libero. Morbi auctor iaculis porttitor. Sed ut magna ac risus et hendrerit scelerisque. Praesent eleifend lacus in lectus aliquam porta. Cras eu ornare dui curabitur lacinia.</p>
+								</ul> -->
+<!-- 								<p class="content">Nam elementum nisl et mi a commodo porttitor. Morbi sit amet nisl eu arcu faucibus hendrerit vel a risus. Nam a orci mi, elementum ac arcu sit amet, fermentum pellentesque et purus. Integer maximus varius lorem, sed convallis diam accumsan sed. Etiam porttitor placerat sapien, sed eleifend a enim pulvinar faucibus semper quis ut arcu. Ut non nisl a mollis est efficitur vestibulum. Integer eget purus nec nulla mattis et accumsan ut magna libero. Morbi auctor iaculis porttitor. Sed ut magna ac risus et hendrerit scelerisque. Praesent eleifend lacus in lectus aliquam porta. Cras eu ornare dui curabitur lacinia.</p>
 								<footer class="major">
 									<ul class="actions">
 										<li><a href="generic.html" class="button">Learn More</a></li>
 									</ul>
-								</footer>
+								</footer> -->
 							</section>
-
-						<!-- Get Started -->
-							<section id="cta" class="main special">
-								<header class="major">
-									<h2>Congue imperdiet</h2>
-									<p>Donec imperdiet consequat consequat. Suspendisse feugiat congue<br />
-									posuere. Nulla massa urna, fermentum eget quam aliquet.</p>
-								</header>
-								<footer class="major">
-									<ul class="actions">
-										<li><a href="generic.html" class="button special">Get Started</a></li>
-										<li><a href="generic.html" class="button">Learn More</a></li>
-									</ul>
-								</footer>
-							</section>
-
-					</div>
 
 				<!-- Footer -->
 					<footer id="footer">
-						<section>
+						<!-- <section>
 							<h2>Aliquam sed mauris</h2>
 							<p>Sed lorem ipsum dolor sit amet et nullam consequat feugiat consequat magna adipiscing tempus etiam dolore veroeros. eget dapibus mauris. Cras aliquet, nisl ut viverra sollicitudin, ligula erat egestas velit, vitae tincidunt odio.</p>
 							<ul class="actions">
@@ -168,7 +229,7 @@
 								<li><a href="#" class="icon fa-dribbble alt"><span class="label">Dribbble</span></a></li>
 							</ul>
 						</section>
-						<p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+						<p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p> -->
 					</footer>
 
 			</div>
