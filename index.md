@@ -3,7 +3,7 @@ Accelerating SqueezeNet on FPGA  - Megha Arora, Samyukta Lanka
 # Proposal
 
 ## Summary
-We are going to accelerate [SqueezeNet][0] (a CNN variant) on an FPGA)
+We are going to accelerate SqueezeNet\[[0][0]\] (a CNN variant) on an FPGA)
 
 ## Background 
 We chose DNNs because they are revolutionizing many areas of computing today and there is parallelism that the underlying model possesses. The sequence of multiply/add operations (like FMA) to calculate the input to each layer in the network are highly parallelizable. In particular, there are multiple axis of parallelism we plan to explore - 
@@ -12,7 +12,7 @@ Layer parallelism - different layers being processed in parallel (low level of p
 Node parallelism - Here the axis of parallelism will be each neuron (there can be millions in a DNN); most prominent in this problem. Entails high level of parallelism and FPGA ‘cells’ are ideal for this
 Data parallelism - Computing the dot product of the input and the weights at each step in parallel (including Convolution in parallel).
 
-SqueezeNet was created to combat the large number of parameters required for CNNs. Based on [AlexNet][1] , the purpose was to reduce the memory required without losing accuracy. We will be accelerating SqueezeNet on the Zybo Zync-7020. 
+SqueezeNet was created to combat the large number of parameters required for CNNs. Based on AlexNet\[[1][1]\] , the purpose was to reduce the memory required without losing accuracy. We will be accelerating SqueezeNet on the Zybo Zync-7020. 
 
 ![SqueezeNet Architecture](https://github.com/lankas/15-618Project/blob/master/SqueezeNet-layers.PNG)
 
@@ -25,11 +25,11 @@ One of the major challenges that we will be dealing with is being memory bound o
 We will use the Zybo Zync-7020 FPGA for this task.
 We do not have a baseline FPGA implementation to refer to - the implementation of which will be our first goal. We will be referring to the following implementations/papers extensively -
  
-[SqueezeNet][0]
+SqueezeNet\[[0][0]\]
 
-[Implementation of SqueezeNet-like CNN on FPGA][2]
+Implementation of SqueezeNet-like CNN on FPGA\[[2][2]\]
 
-[FPGA Implementations of Neural Networks][3]
+FPGA Implementations of Neural Networks\[[3][3]\]
 
 
 ## Goals and Deliverables
@@ -61,6 +61,14 @@ FPGAs on the other hand offer the best balance of cost:performance and flexibili
 
 
 ## References
+\[0\]: https://arxiv.org/pdf/1602.07360.pdf
+
+\[1\]: https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf
+
+\[2\]: https://github.com/dgschwend/zynqnet
+
+\[3\]: http://lab.fs.uni-lj.si/lasin/wp/IMIT_files/neural/doc/Omondi2006.pdf
+
 [0]: https://arxiv.org/pdf/1602.07360.pdf
 [1]: https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf
 [2]: https://github.com/dgschwend/zynqnet
