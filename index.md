@@ -1,6 +1,4 @@
-# Accelerating SqueezeNet on FPGA
-## Megha Arora & Samyukta Lanka
-
+<p align="right"><b>Megha Arora & Samyukta Lanka</b></p>
 ## Summary
 We are going to accelerate SqueezeNet\[[0][0]\] (a CNN variant) on an FPGA)
 
