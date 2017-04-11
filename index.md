@@ -14,7 +14,7 @@ Data parallelism - Computing the dot product of the input and the weights at eac
 
 SqueezeNet was created to combat the large number of parameters required for CNNs. Based on AlexNet[1] , the purpose was to reduce the memory required without losing accuracy. We will be accelerating SqueezeNet on the Zybo Zync-7020. 
 
-Insert: SqueezeNet Architecture
+![SqueezeNet Architecture](https://github.com/lankas/15-618Project/blob/master/SqueezeNet-layers.PNG)
 
 ## Challenge
 All the different levels of parallelism vary drastically and will be traded off against each other. Some are more prominent in the problem as compared to others. Varying amount of effort and benefit is involved in each, which would require extensive amount of platform knowledge (FPGA in this case) and testing multiple implementations! Deciding which one to prioritize at what cost will be challenging! Also, some types of parallelism may not be suitable for us to implement on the FPGA depending on the design (eg: exploiting bit-level parallelism on FPGA).
@@ -25,9 +25,11 @@ One of the major challenges that we will be dealing with is being memory bound o
 We will use the Zybo Zync-7020 FPGA for this task.
 We do not have a baseline FPGA implementation to refer to - the implementation of which will be our first goal. We will be referring to the following implementations/papers extensively -
  
-SqueezeNet: https://arxiv.org/pdf/1602.07360.pdf
-Implementation of SqueezeNet-like CNN on FPGA: https://github.com/dgschwend/zynqnet
-FPGA Implementations of Neural Networks: http://lab.fs.uni-lj.si/lasin/wp/IMIT_files/neural/doc/Omondi2006.pdf
+[SqueezeNet](https://arxiv.org/pdf/1602.07360.pdf)
+
+[Implementation of SqueezeNet-like CNN on FPGA](https://github.com/dgschwend/zynqnet)
+
+[FPGA Implementations of Neural Networks](http://lab.fs.uni-lj.si/lasin/wp/IMIT_files/neural/doc/Omondi2006.pdf)
 
 
 ## Goals and Deliverables
