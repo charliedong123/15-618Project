@@ -46,19 +46,17 @@ FPGAs on the other hand offer the best balance of cost:performance and flexibili
 
 ## Schedule
 
-Week (finish till)     Milestone
 
-April 10th             Proposal 
 
-April 16th             Convolutions and Max Pooling Layers Working Separately on FPGA
+| Date                    | Milestone                                                          |
+| ------------------------|:-------------------------------------------------------------------|
+| April 10<sup>th</sup>   | Proposal                                                           |
+| April 16<sup>th</sup>   | Convolutions and Max Pooling Layers Working Separately on FPGA     |
+| April 23<sup>th</sup>   | Full SqueezeNet Working on FPGA                                    |
+| April 30<sup>th</sup>   | Acceleration + Optimizations                                       |
+| May 7<sup>th</sup>      | Benchmarking                                                       |
+| May 11<sup>th</sup>     | Result Collation + Report Writing                                  |
 
-April 23rd             Full SqueezeNet Working on FPGA
-
-April 30th             Acceleration + Optimizations
-
-May 7th                Benchmarking
-
-May 12th               Result Collation + Report Writing
 
 
 ## Welcome to GitHub Pages
