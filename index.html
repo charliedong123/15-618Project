@@ -163,11 +163,80 @@
 							</section>
 
 						<!-- First Section -->
-							<section id="first" class="main special">
-								<header class="major">
+							<section id="first" class="main">
+								<!-- <header class="major">
 									<h2>Checkpoint</h2>
-								</header>
-<!-- 								<ul class="features">
+								</header> -->
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Schedule (Updated)</h2>
+										</header>
+										<table style="width:100%">
+										  <tr>
+										    <th>Date</th>
+										    <th>Milestone</th>
+										    <th>Status</th>
+										  </tr>
+										  <tr>
+										    <td>April 10</td>
+										    <td>Proposal</td> 
+										    <td>Done</td> 
+										  </tr>
+										  <tr>
+										    <td>April 16</td>
+										    <td>SqueezeNet CPU Benchmark</td>
+										    <td>Done</td>  
+										  </tr>
+										  <tr>
+										    <td>April 20</td>
+										    <td>Convolutions and Max Pooling Modules</td>
+										    <td>Done</td>  
+										  </tr>
+										  <tr>
+										    <td>April 25</td>
+										    <td>Design Flow with DMA</td> 
+										    <td>Ongoing</td> 
+										  </tr>
+										  <tr>
+										    <td>April 29</td>
+										    <td>SqueezeNet Working on FPGA</td> 
+										    <td>-</td> 
+										  </tr>
+										  <tr>
+										    <td>May 3</td>
+										    <td>Acceleration + Optimizations</td> 
+										    <td>-</td> 
+										  </tr>
+										  <tr>
+										    <td>May 7</td>
+										    <td>Benchmarking</td>
+										    <td>-</td>  
+										  </tr>
+										  <tr>
+										    <td>May 11</td>
+										    <td>Result Collation + Report Writing</td>
+										    <td>-</td>  
+										  </tr>
+										</table>
+									</div>
+								</div>
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Status Update</h2>
+										</header>
+										<li>We are a little behind because of the delay in getting access to the FPGA and the initial hardware setup (including driver installations) was bumpy. We will have a better idea once we get SqueezeNet working on the FPGA, which we can test against our CPU benchmark for correctness and performance.</li>
+
+										<li>We have the hardware setup complete and verilog modules for convolution and max pooling are also done. We are currently trying to load data from DMA now as doing the same from the SD card is complicated and we couldn't get that to work.</li>
+
+										<li>We had a update meeting with the course staff (Teguh) to finalize our design flow.</li>
+
+										<li>For the parallelism competition, we are going to simultaneously show SqueezeNet in action on multiple images with one version running the CPU implementation and the other running the FPGA implementation. We will also present the performance of our implementation as compared to <a href="https://github.com/soumith/convnet-benchmarks">existing benchmarks</a> through speedup graphs. </li>
+									</div>
+								</div>
+
+								<!-- <ul class="features">
 									<li>
 										<span class="icon major style1 fa-code"></span>
 										<h3>Ipsum consequat</h3>
