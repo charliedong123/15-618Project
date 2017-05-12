@@ -29,14 +29,147 @@
 				<!-- Nav -->
 					<nav id="nav">
 						<ul>
-							<li><a href="#proposal" class="active">Proposal</a></li>
-							<li><a href="#first">CheckPoint</a></li>
-							<li><a href="#second">Final</a></li>
+							<li><a href="#final">Final</a></li>
+							<li><a href="#proposal" class="active">Initial Proposal</a></li>
+							<!-- <li><a href="#first">CheckPoint</a></li> -->
 						</ul>
 					</nav>
 
 				<!-- Main -->
 					<div id="main">
+							<!-- Second Section -->
+							<section id="final" class="main">
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Final Title</h2>
+										</header>
+										<p> Accelerating SqueezeNet on Zybo Zynq-7020 FPGA</p>
+									</div>
+								</div>
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Project Summary</h2>
+										</header>
+										<p> We have successfully been able to accelerate the SqueezeNet on Zybo Zynq-7020 FPGA. Our implementation (when evaluated on the ILSVRC2012 ImageNet data) is faster and more energy efficient as compared to the <a href="#final">baseline</a>! </p>
+									</div>
+								</div>
+
+
+
+								<div id="baseline" class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Baseline</h2>
+										</header>
+										<li> Evaluation using the SqueezeNet v1.1 Keras model on GeForce GTX 1080 GPU on GHC machines </li>
+										<li> Weights obtained from original <a href="https://github.com/DeepScale/SqueezeNet/tree/master/SqueezeNet_v1.1">Caffe model</a> by authors of SqueezeNet </li> 
+										<li> #images - 1000 images (224x224) from <a href="http://www.image-net.org/challenges/LSVRC/2012/"> ILSVRC2012 ImageNet data </a></li>
+									</div>
+								</div>
+
+								
+
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>It is all about the convolutions! (maybe not..)</h2>
+										</header>
+										<img src="images/Conv.PNG" alt="" /> <br>
+
+										<p>These are estimates generated using the HLS Synthesis tool specific to the SqueezeNetv1.1. This is the ideal decrease in the total number of clock cycles required for the entire SqueezeNet workload. After pipelining, loop flattening and unrolling (by as high a factor as possible), we only need 2% of the total clock cycles we need otherwise (without any of the optimizations)! Seems like an efficient implementation, right? We don't see this though once we put the SqueezeNet on the FPGA. :(</p>									
+									</div>
+								</div>
+
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Initial Results</h2>
+										</header>
+										<img src="images/Initial.PNG" alt="" /> <br>
+										<p>We get a speedup of around <b>4.31x</b> as compared to the GPU implementation. This includes the Layer Fusion 1 (amortizing over loading layers), maximizing consumer-producer locality, input reuse and making access patterns efficient! As is evident, any of the optimizations for convolutions (pipelining and loop unrolling) did not help us run any faster as we are memory bandwidth bound.</p>								
+									</div>
+								</div>
+
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Final Results</h2>
+										</header>
+										<img src="images/Final.PNG" alt="" /> <br>
+										<p>After Layer Fusion 2 and other HLS enabled optimizations (through Pragmas), we get a speedup of around <b>4.96x</b> as compared to the GPU implementation.</p>								
+									</div>
+								</div>
+
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Final Resource Utilization</h2>
+										</header>
+										<img src="images/Resource.PNG" alt="" /> <br>
+										<p>Our BRAM utilization is high. We are also using our compute resources well. These are estimates generated using the HLS Synthesis tool specific to the SqueezeNet v1.1! </p>
+									</div>
+								</div>
+
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Energy Efficiency</h2>
+										</header>
+										<img src="images/Power.PNG" alt="" /> <br>
+										<p>These are the power measurements for the SqueezeNet FPGA Accelerator when synthesized for Zybo Zynq-7020 FPGA as compared to the GPU version. FPGA estimations using the <a href="https://www.xilinx.com/products/technology/power/xpe.html">Xilinx Power Estimator (XCE) tool</a> and GPU measurements using nvidia-smi interface. Our implementation is significantly more energy efficient which is inline with what we have learnt about hardware specialization from this class!</p>
+									</div>
+								</div> 
+
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>The Last Cut - Fixed Point Arithmetic</h2>
+										</header>
+										<p>According to a quick test synthesis with Vivado HLS, there is a potential to save 50% of the Block RAMs and 80% of the DSP slices* if we use a 16-bit fixed-point data format as compared to the current 32-bit representation. Also, note that our <b>accuracy</b>b> is the same as the output from our <a href="baseline"> baseline </a> for the 1000 images we used (same weights, same computation)!</p>
+									</div>
+								</div> 
+
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Conclusion</h2>
+										</header>
+										<p> 	</p>								
+									</div>
+								</div>
+
+								<!-- <ul class="statistics">
+									<li class="style1">
+										<span class="icon fa-code-fork"></span>
+										<strong>5,120</strong> Etiam
+									</li>
+									<li class="style2">
+										<span class="icon fa-folder-open-o"></span>
+										<strong>8,192</strong> Magna
+									</li>
+									<li class="style3">
+										<span class="icon fa-signal"></span>
+										<strong>2,048</strong> Tempus
+									</li>
+									<li class="style4">
+										<span class="icon fa-laptop"></span>
+										<strong>4,096</strong> Aliquam
+									</li>
+									<li class="style5">
+										<span class="icon fa-diamond"></span>
+										<strong>1,024</strong> Nullam
+									</li>
+								</ul>
+								<p class="content">Nam elementum nisl et mi a commodo porttitor. Morbi sit amet nisl eu arcu faucibus hendrerit vel a risus. Nam a orci mi, elementum ac arcu sit amet, fermentum pellentesque et purus. Integer maximus varius lorem, sed convallis diam accumsan sed. Etiam porttitor placerat sapien, sed eleifend a enim pulvinar faucibus semper quis ut arcu. Ut non nisl a mollis est efficitur vestibulum. Integer eget purus nec nulla mattis et accumsan ut magna libero. Morbi auctor iaculis porttitor. Sed ut magna ac risus et hendrerit scelerisque. Praesent eleifend lacus in lectus aliquam porta. Cras eu ornare dui curabitur lacinia.</p>
+								<footer class="major">
+									<ul class="actions">
+										<li><a href="generic.html" class="button">Learn More</a></li>
+									</ul>
+								</footer> -->
+							</section>
+
 
 						<!-- Introduction -->
 							<section id="proposal" class="main">
@@ -260,86 +393,6 @@
 								</footer> -->
 							</section>
 
-						<!-- Second Section -->
-							<section id="second" class="main">
-								<div class="spotlight">
-									<div class="content">
-										<header class="major">
-											<h2>Final Title</h2>
-										</header>
-										<p> Accelerating SqueezeNet on FPGA </p>
-									</div>
-								</div>
-								<div class="spotlight">
-									<div class="content">
-										<header class="major">
-											<h2>Project Summary</h2>
-										</header>
-										<p> We have successfully been able to accelerate the SqueezeNet on Zybo Zynq-7020 FPGA. Our implementation (when evaluated on the ILSVRC2012 ImageNet data) is faster and more energy efficient as compared to the existing benchmarks! </p>
-									</div>
-								</div>
-								<div class="spotlight">
-									<div class="content">
-										<header class="major">
-											<h2>Major Technical Challenges Faced</h2>
-										</header>
-										<li> Understanding the memory hierarchy of Zybo Zynq-7020 FPGA and iterating on our code several times to utilize it efficiently </li>
-										<li> Finding ideal hardware configuration for the DNN workload </li>
-										<li> Multiple levels of parallelism in the DNN workload and associated synchronization requirements</li>
-										<li> Changing the original architecture of the SqueezeNet for an FPGA setting</li>										
-									</div>
-								</div>
-
-								<div class="spotlight">
-									<div class="content">
-										<header class="major">
-											<h2>Preliminary Results</h2>
-										</header>
-										<p> Under Construction!</p>	
-										<li> Performance Evaluation (on ILSVRC2012 ImageNet data) </li>
-										<li> Power Utilization on Zybo Zynq-7020 FPGA vs GeForce GTX 1080</li>
-										<li> Accuracy trade-off (due to fixed-point arithmetic)</li>							
-									</div>
-								</div>
-
-								<div class="spotlight">
-									<div class="content">
-										<header class="major">
-											<h2>Final numbers expected!</h2>
-										</header>
-										<p> Under Construction!	</p>								
-									</div>
-								</div>
-
-								<!-- <ul class="statistics">
-									<li class="style1">
-										<span class="icon fa-code-fork"></span>
-										<strong>5,120</strong> Etiam
-									</li>
-									<li class="style2">
-										<span class="icon fa-folder-open-o"></span>
-										<strong>8,192</strong> Magna
-									</li>
-									<li class="style3">
-										<span class="icon fa-signal"></span>
-										<strong>2,048</strong> Tempus
-									</li>
-									<li class="style4">
-										<span class="icon fa-laptop"></span>
-										<strong>4,096</strong> Aliquam
-									</li>
-									<li class="style5">
-										<span class="icon fa-diamond"></span>
-										<strong>1,024</strong> Nullam
-									</li>
-								</ul> -->
-<!-- 								<p class="content">Nam elementum nisl et mi a commodo porttitor. Morbi sit amet nisl eu arcu faucibus hendrerit vel a risus. Nam a orci mi, elementum ac arcu sit amet, fermentum pellentesque et purus. Integer maximus varius lorem, sed convallis diam accumsan sed. Etiam porttitor placerat sapien, sed eleifend a enim pulvinar faucibus semper quis ut arcu. Ut non nisl a mollis est efficitur vestibulum. Integer eget purus nec nulla mattis et accumsan ut magna libero. Morbi auctor iaculis porttitor. Sed ut magna ac risus et hendrerit scelerisque. Praesent eleifend lacus in lectus aliquam porta. Cras eu ornare dui curabitur lacinia.</p>
-								<footer class="major">
-									<ul class="actions">
-										<li><a href="generic.html" class="button">Learn More</a></li>
-									</ul>
-								</footer> -->
-							</section>
 
 				<!-- Footer -->
 					<footer id="footer">
