@@ -39,23 +39,62 @@
 					<div id="main">
 							<!-- Second Section -->
 							<section id="final" class="main">
-								<div class="spotlight">
+								<!-- <div class="spotlight">
 									<div class="content">
 										<header class="major">
 											<h2>Final Title</h2>
 										</header>
 										<p> Accelerating SqueezeNet on Zybo Zynq-7020 FPGA</p>
 									</div>
-								</div>
+								</div> -->
 								<div class="spotlight">
 									<div class="content">
 										<header class="major">
 											<h2>Project Summary</h2>
 										</header>
-										<p> We have successfully been able to accelerate the SqueezeNet on Zybo Zynq-7020 FPGA. Our implementation (when evaluated on the ILSVRC2012 ImageNet data) is faster and more energy efficient as compared to the <a href="#final">baseline</a>! </p>
+										<p> We have successfully been able to accelerate the <a href="https://arxiv.org/pdf/1602.07360.pdf">SqueezeNet</a> on Zybo Zynq-7020 FPGA. Our implementation (when evaluated using the ILSVRC2012 ImageNet data) is faster and more energy efficient as compared to our <a href="#baseline">baseline</a>! </p>
 									</div>
 								</div>
 
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Background</h2>
+										</header>
+
+											SqueezeNet is an 18-layer network that uses 1x1 and 3x3 convolutions, 3x3 max-pooling and global-averaging. One of its major components is the <b>fire layer</b>. Fire layers start out with a "squeeze" step (a few 1x1 convolutions) and lead to two "expand" steps, which include a 1x1 and a 3x3 convolution followed by concatenation of the two results. SqueezeNet was created to combat the large number of parameters required for CNNs. The design goal was to reduce the total number of weights without losing accuracy significantly. SqueezeNet v1.1 has 1.24 million parameters i.e. around <b>5MB</b> of weights in all. <br>
+											One of our goals was to parallelize the convolutions, which are the primary components of our workload. We also needed to ensure that we don't parallelize at the expense of performing more work than the sequential approach, access cache poorly and use inefficient storage patterns. <br>
+											There are various restrictions that come with the workload and the FPGA setting. For instance, we are bound to be sequential in between layers. Moreover, we cannot perform the expand step before the squeeze step finishes. Essentially, there are synchronization requirements within the workload, which we cannot overlook. We mention some of the major technical challenges we faced in the next section.
+									</div>
+									<img src="images/Fire.png" alt="" height="185" width="300" /> <br>
+								</div>
+
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Technical Challenges</h2>
+										</header>
+										<li>Being new to development on FPGAs meant there was a steep learning curve. Even when our simulations synthesized on Vivado, we faced a lot of trouble running them directly on the FPGA</li>
+										<li>Understanding memory hierarchy of Zybo Zynq-7020 FPGA and optimizing data movement across SD Card, DRAM, BRAM and the registers</li>
+										<li>DNN workload mostly hits the memory wall</li>
+										<li>Multiple levels of parallelism in the DNN workload & associated synchronization requirements</li>
+									</div>
+								</div>
+
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Approach</h2>
+										</header>
+										<p> We obtained the trained weights from the original <a href="https://github.com/DeepScale/SqueezeNet/tree/master/SqueezeNet_v1.1">Caffe model</a> provided by the authors of SqueezeNet. However, we did not have an existing code-base for the FPGA implementation to build upon.<br>
+
+										We store weights and image data on the DRAM in the FPGA. For each layer computation, the weights are loaded into the BRAM along with the input data for that layer. There are several ways we could do this! We optimized our access and storage patterns for <b>maximal data reuse</b>. We also ensured that our approach incorporates <b>producer-consumer locality</b> by fusing multiple layers together. As a first attempt (we call it <b>Layer Fusion 1</b>), instead of loading the squeeze and the two expand layers separately on the FPGA, we load the layer settings at once. Essentially, this brings down the number of layers in our network from 18 to 10. We perform computations on a batch of images at a time to amortize over loading layer settings and weights time.<br>
+
+										We tried to improve performance of our convolutions via pipelining, loop unrolling and flattening, but it didn't help because we are bandwidth bound, so making our compute faster won't have an impact. <br>
+
+										Another optimization (we call it <b>Layer Fusion 2</b>) that we attempted was fusing convolution and max-pool layers. Originally, we performed a convolution (and ReLU), the output was written back, and then loaded again to perform a max-pool. By fusing these layers, we were able to max-pool right after performing the convolution on a smaller chunks, thus improving producer-consumer locality.</p>
+									</div>
+								</div>
 
 
 								<div id="baseline" class="spotlight">
@@ -69,26 +108,19 @@
 									</div>
 								</div>
 
-								
-
-								<div class="spotlight">
-									<div class="content">
-										<header class="major">
-											<h2>It is all about the convolutions! (maybe not..)</h2>
-										</header>
-										<img src="images/Conv.PNG" alt="" /> <br>
-
-										<p>These are estimates generated using the HLS Synthesis tool specific to the SqueezeNetv1.1. This is the ideal decrease in the total number of clock cycles required for the entire SqueezeNet workload. After pipelining, loop flattening and unrolling (by as high a factor as possible), we only need 2% of the total clock cycles we need otherwise (without any of the optimizations)! Seems like an efficient implementation, right? We don't see this though once we put the SqueezeNet on the FPGA. :(</p>									
-									</div>
-								</div>
 
 								<div class="spotlight">
 									<div class="content">
 										<header class="major">
 											<h2>Initial Results</h2>
 										</header>
-										<img src="images/Initial.PNG" alt="" /> <br>
-										<p>We get a speedup of around <b>4.31x</b> as compared to the GPU implementation. This includes the Layer Fusion 1 (amortizing over loading layers), maximizing consumer-producer locality, input reuse and making access patterns efficient! As is evident, any of the optimizations for convolutions (pipelining and loop unrolling) did not help us run any faster as we are memory bandwidth bound.</p>								
+
+										<img src="images/Conv.png" alt="" /> <br>
+
+										<p>These are estimates generated using the HLS Synthesis tool specific to SqueezeNetv1.1. This shows the ideal decrease in the total number of clock cycles required for the entire SqueezeNet workload. After pipelining, loop flattening and unrolling, we only need 2% of the total clock cycles we need otherwise (without any of the optimizations)! Seems like an efficient implementation, right? We don't see this improvement once we put the SqueezeNet on the FPGA. :(</p>	
+
+										<img src="images/Initial.png" alt="" /> <br>
+										<p>We get a speedup of around <b>4.31x</b> as compared to the GPU baseline. The implementation represented by the red bar includes Layer Fusion 1 (amortizing over loading layers), maximizing consumer-producer locality, input reuse and making access patterns efficient! As is evident, any of the optimizations for convolutions i.e. pipelining and loop unrolling (represented by the yellow bar) did not help us run any faster as we are memory bandwidth bound on the FPGA!</p>								
 									</div>
 								</div>
 
@@ -97,46 +129,44 @@
 										<header class="major">
 											<h2>Final Results</h2>
 										</header>
-										<img src="images/Final.PNG" alt="" /> <br>
-										<p>After Layer Fusion 2 and other HLS enabled optimizations (through Pragmas), we get a speedup of around <b>4.96x</b> as compared to the GPU implementation.</p>								
+										<img src="images/Final.png" alt="" /> <br>
+										<p>We also tried several HLS enables optimization by using directives like ARRAY_PARTITION, RESOURCE, FUNCTION_INSTANTIATE, etc. After Layer Fusion 2 and these HLS enabled optimizations, we get a net speedup of around <b>4.96x</b> as compared to the GPU baseline. Also, note that our <b>accuracy</b> is exactly the same as the output from our <a href="baseline"> baseline </a> for the 1000 images as we use the exact same weights and perform the same computation (just more efficiently)!</p>
+
+										<header>
+											<h3><b>Final Resource Utilization</b></h3>
+										</header>
+										<img src="images/Resource.png" alt="" height="200" width="800" /> <br>
+										<p>These estimates are generated using the HLS Synthesis tool specifically for SqueezeNet v1.1. Our BRAM utilization is high! We are also using compute resources well. We mainly care about BRAM here due to the nature of our workload.</p>
+
+										<header>
+											<h3><b>Energy Efficiency</b></h3>
+										</header>
+										<img src="images/Power.png" alt="" height="260" width="600"/> <br>
+										<p>These are the power measurements for the SqueezeNet FPGA Accelerator when synthesized for Zybo Zynq-7020 FPGA as compared to the GPU baseline. FPGA estimations have been obtained using the <a href="https://www.xilinx.com/products/technology/power/xpe.html">Xilinx Power Estimator (XCE) tool</a> and the GPU measurements using the nvidia-smi interface. Our implementation is significantly more energy efficient which is inline with what we have learnt about hardware specialization from this class!</p>
+
+
 									</div>
 								</div>
+
 
 								<div class="spotlight">
 									<div class="content">
 										<header class="major">
-											<h2>Final Resource Utilization</h2>
+											<h2>Potential Improvement - Fixed Point Arithmetic!</h2>
 										</header>
-										<img src="images/Resource.PNG" alt="" /> <br>
-										<p>Our BRAM utilization is high. We are also using our compute resources well. These are estimates generated using the HLS Synthesis tool specific to the SqueezeNet v1.1! </p>
-									</div>
-								</div>
-
-								<div class="spotlight">
-									<div class="content">
-										<header class="major">
-											<h2>Energy Efficiency</h2>
-										</header>
-										<img src="images/Power.PNG" alt="" /> <br>
-										<p>These are the power measurements for the SqueezeNet FPGA Accelerator when synthesized for Zybo Zynq-7020 FPGA as compared to the GPU version. FPGA estimations using the <a href="https://www.xilinx.com/products/technology/power/xpe.html">Xilinx Power Estimator (XCE) tool</a> and GPU measurements using nvidia-smi interface. Our implementation is significantly more energy efficient which is inline with what we have learnt about hardware specialization from this class!</p>
+										<p>According to a quick test synthesis with Vivado HLS, there is a potential to save 50% of the BRAMs and 80% of the DSP slices if we use a 16-bit fixed-point data format as compared to the current 32-bit representation.</p>
 									</div>
 								</div> 
 
 								<div class="spotlight">
 									<div class="content">
 										<header class="major">
-											<h2>The Last Cut - Fixed Point Arithmetic</h2>
+											<h2>References</h2>
 										</header>
-										<p>According to a quick test synthesis with Vivado HLS, there is a potential to save 50% of the Block RAMs and 80% of the DSP slices* if we use a 16-bit fixed-point data format as compared to the current 32-bit representation. Also, note that our <b>accuracy</b>b> is the same as the output from our <a href="baseline"> baseline </a> for the 1000 images we used (same weights, same computation)!</p>
-									</div>
-								</div> 
-
-								<div class="spotlight">
-									<div class="content">
-										<header class="major">
-											<h2>Conclusion</h2>
-										</header>
-										<p> 	</p>								
+										<li> [0]: <a href="https://arxiv.org/pdf/1602.07360.pdf"> https://arxiv.org/pdf/1602.07360.pdf</a></li>
+										<li> [1]: <a href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf"> https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf </a></li>
+										<li> [2]: <a href="https://github.com/dgschwend/zynqnet"> https://github.com/dgschwend/zynqnet</a></li>
+										<li> [3]: <a href="http://lab.fs.uni-lj.si/lasin/wp/IMIT_files/neural/doc/Omondi2006.pdf"> http://lab.fs.uni-lj.si/lasin/wp/IMIT_files/neural/doc/Omondi2006.pdf</a></li>										
 									</div>
 								</div>
 
@@ -176,7 +206,7 @@
 								<div class="spotlight">
 									<div class="content">
 										<header class="major">
-											<h2>Summary</h2>
+											<h2>Project Goal</h2>
 										</header>
 										<p>We will accelerate <a href="https://arxiv.org/pdf/1602.07360.pdf">SqueezeNet</a> (a CNN variant) on an FPGA</p>
 									</div>
