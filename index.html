@@ -84,16 +84,19 @@
 								<div class="spotlight">
 									<div class="content">
 										<header class="major">
-											<h2>Approach</h2>
+											<h2>Approach and Optimizations</h2>
 										</header>
 										<p> We obtained the trained weights from the original <a href="https://github.com/DeepScale/SqueezeNet/tree/master/SqueezeNet_v1.1">Caffe model</a> provided by the authors of SqueezeNet. However, we did not have an existing code-base for the FPGA implementation to build upon.<br>
 
-										We store weights and image data on the DRAM in the FPGA. For each layer computation, the weights are loaded into the BRAM along with the input data for that layer. There are several ways we could do this! We optimized our access and storage patterns for <b>maximal data reuse</b>. We also ensured that our approach incorporates <b>producer-consumer locality</b> by fusing multiple layers together. As a first attempt (we call it <b>Layer Fusion 1</b>), instead of loading the squeeze and the two expand layers separately on the FPGA, we load the layer settings at once. Essentially, this brings down the number of layers in our network from 18 to 10. We perform computations on a batch of images at a time to amortize over loading layer settings and weights time.<br>
+										We store weights and image data on the DRAM in the FPGA. For each layer computation, the weights are loaded into the BRAM along with the input data for that layer. There are several ways we could do this! We optimized our access and storage patterns for <b>maximal data reuse</b>. We also ensured that our approach incorporates <b>producer-consumer locality</b> by fusing multiple layers together. As a first attempt (we call it <b>Layer Fusion 1</b>), instead of loading the squeeze and the two expand layers separately on the FPGA, we load the layer settings at once. Essentially, this brings down the number of layers in our network from 18 to 10. We perform computations on a batch of images at a time to amortize over loading layer settings and weights time.<br><br>
+										<img src="images/lf1.png" alt="" height="350" width="800"/> <br><br>
 
 										We tried to improve performance of our convolutions via pipelining, loop unrolling and flattening, but it didn't help because we are bandwidth bound, so making our compute faster won't have an impact. <br>
 
-										Another optimization (we call it <b>Layer Fusion 2</b>) that we attempted was fusing convolution and max-pool layers. Originally, we performed a convolution (and ReLU), the output was written back, and then loaded again to perform a max-pool. By fusing these layers, we were able to max-pool right after performing the convolution on a smaller chunks, thus improving producer-consumer locality.</p>
+										Another optimization (we call it <b>Layer Fusion 2</b>) that we attempted was fusing convolution and max-pool layers. Originally, we performed a convolution (and ReLU), the output was written back, and then loaded again to perform a max-pool. By fusing these layers, we were able to max-pool right after performing the convolution on a smaller chunks, thus improving producer-consumer locality.</p> <br>
+										<img src="images/lf2.png" alt="" height="250" width="750" style="text-align:center"/> <br>
 									</div>
+
 								</div>
 
 
